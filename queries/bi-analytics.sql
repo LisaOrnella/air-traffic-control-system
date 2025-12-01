@@ -1,183 +1,160 @@
+-- =============================================
+-- ANALYTICS QUERIES
+-- =============================================
 
--- 1. PROCEDURE: Airline Performance Dashboard
-CREATE OR REPLACE PROCEDURE generate_airline_performance_report AS
-    CURSOR airline_stats IS
-        SELECT 
-            airline,
-            COUNT(*) as total_flights,
-            SUM(CASE WHEN status = 'Landed' THEN 1 ELSE 0 END) as landed_flights,
-            SUM(CASE WHEN status = 'Delayed' THEN 1 ELSE 0 END) as delayed_flights,
-            SUM(CASE WHEN status = 'Scheduled' THEN 1 ELSE 0 END) as scheduled_flights,
-            ROUND(AVG(passenger_count), 0) as avg_passengers,
-            ROUND((SUM(CASE WHEN status = 'Landed' THEN 1 ELSE 0 END) / COUNT(*) * 100), 2) as on_time_percentage
-        FROM flights
-        GROUP BY airline
-        ORDER BY total_flights DESC;
-BEGIN
-    DBMS_OUTPUT.PUT_LINE('=== AIRLINE PERFORMANCE DASHBOARD ===');
-    DBMS_OUTPUT.PUT_LINE('Generated: ' || TO_CHAR(SYSDATE, 'DD-MON-YYYY HH24:MI'));
-    DBMS_OUTPUT.PUT_LINE('=' || RPAD('=', 70, '='));
-    
-    FOR airline_rec IN airline_stats LOOP
-        DBMS_OUTPUT.PUT_LINE(RPAD(airline_rec.airline, 20) ||
-                            RPAD('Flights: ' || airline_rec.total_flights, 15) ||
-                            RPAD('Landed: ' || airline_rec.landed_flights, 15) ||
-                            RPAD('Delayed: ' || airline_rec.delayed_flights, 15) ||
-                            RPAD('On-Time: ' || airline_rec.on_time_percentage || '%', 15) ||
-                            'Avg Pax: ' || airline_rec.avg_passengers);
-    END LOOP;
-END generate_airline_performance_report;
-/
+-- 1. AIRLINE PERFORMANCE ANALYTICS
+SELECT 
+    airline,
+    COUNT(*) AS total_flights,
+    ROUND(AVG(passenger_count), 0) AS avg_passengers,
+    SUM(CASE WHEN status = 'Landed' THEN 1 ELSE 0 END) * 100.0 / COUNT(*) AS on_time_rate,
+    SUM(CASE WHEN status = 'Delayed' THEN 1 ELSE 0 END) * 100.0 / COUNT(*) AS delay_rate,
+    ROUND(SUM(passenger_count) * 100.0 / (SELECT SUM(passenger_count) FROM flights), 2) AS passenger_market_share
+FROM flights
+GROUP BY airline
+ORDER BY on_time_rate DESC;
 
--- 2. PROCEDURE: Runway Utilization Analysis
-CREATE OR REPLACE PROCEDURE generate_runway_utilization_report AS
-    CURSOR runway_stats IS
-        SELECT 
-            r.resource_name,
-            r.resource_type,
-            COUNT(fa.assignment_id) as total_assignments,
-            SUM(CASE WHEN fa.assignment_status = 'Completed' THEN 1 ELSE 0 END) as completed_assignments,
-            ROUND(AVG(fa.priority_level), 1) as avg_priority,
-            MIN(fa.planned_time) as first_assignment,
-            MAX(fa.planned_time) as last_assignment
-        FROM airport_resources r
-        LEFT JOIN flight_assignments fa ON r.resource_id = fa.resource_id
-        WHERE r.resource_type = 'Runway'
-        GROUP BY r.resource_name, r.resource_type
-        ORDER BY total_assignments DESC;
-BEGIN
-    DBMS_OUTPUT.PUT_LINE('=== RUNWAY UTILIZATION ANALYSIS ===');
-    DBMS_OUTPUT.PUT_LINE('=' || RPAD('=', 60, '='));
-    
-    FOR runway_rec IN runway_stats LOOP
-        DBMS_OUTPUT.PUT_LINE(RPAD(runway_rec.resource_name, 15) ||
-                            RPAD('Type: ' || runway_rec.resource_type, 15) ||
-                            RPAD('Assignments: ' || runway_rec.total_assignments, 20) ||
-                            RPAD('Completed: ' || runway_rec.completed_assignments, 18) ||
-                            'Avg Priority: ' || runway_rec.avg_priority);
-    END LOOP;
-END generate_runway_utilization_report;
-/
+-- 2. PEAK HOUR ANALYSIS USING WINDOW FUNCTIONS
+SELECT 
+    EXTRACT(HOUR FROM planned_time) AS hour_of_day,
+    COUNT(*) AS flight_count,
+    ROUND(AVG(priority_level), 2) AS avg_priority,
+    RANK() OVER (ORDER BY COUNT(*) DESC) AS hour_rank,
+    LAG(COUNT(*)) OVER (ORDER BY EXTRACT(HOUR FROM planned_time)) AS previous_hour_count,
+    ROUND((COUNT(*) - LAG(COUNT(*)) OVER (ORDER BY EXTRACT(HOUR FROM planned_time))) * 100.0 / 
+        NULLIF(LAG(COUNT(*)) OVER (ORDER BY EXTRACT(HOUR FROM planned_time)), 0), 2) AS percent_change
+FROM flight_assignments
+GROUP BY EXTRACT(HOUR FROM planned_time)
+ORDER BY hour_of_day;
 
--- 3. PROCEDURE: Emergency Response Analytics
-CREATE OR REPLACE PROCEDURE generate_emergency_analytics AS
-    v_total_emergencies NUMBER;
-    v_most_common_type VARCHAR2(50);
-BEGIN
-    -- Get emergency statistics
-    SELECT COUNT(*) INTO v_total_emergencies FROM emergency_alerts;
-    
-    SELECT alert_type INTO v_most_common_type
-    FROM (
-        SELECT alert_type, COUNT(*) as count
-        FROM emergency_alerts
-        GROUP BY alert_type
-        ORDER BY count DESC
-    ) WHERE ROWNUM = 1;
-    
-    DBMS_OUTPUT.PUT_LINE('=== EMERGENCY RESPONSE ANALYTICS ===');
-    DBMS_OUTPUT.PUT_LINE('Total Emergencies: ' || v_total_emergencies);
-    DBMS_OUTPUT.PUT_LINE('Most Common Type: ' || v_most_common_type);
-    
-    -- Show emergency breakdown
-    DBMS_OUTPUT.PUT_LINE('--- Emergency Type Breakdown ---');
-    FOR rec IN (
-        SELECT alert_type, COUNT(*) as count,
-               ROUND(COUNT(*) * 100 / v_total_emergencies, 2) as percentage
-        FROM emergency_alerts
-        GROUP BY alert_type
-        ORDER BY count DESC
-    ) LOOP
-        DBMS_OUTPUT.PUT_LINE(RPAD(rec.alert_type, 15) || 
-                            RPAD('Count: ' || rec.count, 15) ||
-                            'Percentage: ' || rec.percentage || '%');
-    END LOOP;
-END generate_emergency_analytics;
-/
+-- 3. RUNWAY UTILIZATION TREND
+SELECT 
+    resource_name,
+    resource_type,
+    COUNT(*) AS total_assignments,
+    SUM(CASE WHEN assignment_status = 'Completed' THEN 1 ELSE 0 END) AS completed_assignments,
+    ROUND(SUM(CASE WHEN assignment_status = 'Completed' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) AS completion_rate,
+    ROUND(AVG(priority_level), 2) AS avg_priority,
+    ROUND(MIN(EXTRACT(HOUR FROM planned_time))) AS earliest_hour,
+    ROUND(MAX(EXTRACT(HOUR FROM planned_time))) AS latest_hour
+FROM flight_assignments fa
+JOIN airport_resources ar ON fa.resource_id = ar.resource_id
+GROUP BY resource_name, resource_type
+ORDER BY total_assignments DESC;
 
--- 4. PROCEDURE: Weather Impact Assessment
-CREATE OR REPLACE PROCEDURE generate_weather_impact_report AS
-    CURSOR weather_stats IS
-        SELECT 
-            condition,
-            COUNT(*) as readings,
-            ROUND(AVG(visibility), 2) as avg_visibility,
-            ROUND(AVG(wind_speed), 2) as avg_wind_speed,
-            ROUND(AVG(temperature), 2) as avg_temperature
-        FROM weather_conditions
-        GROUP BY condition
-        ORDER BY readings DESC;
-BEGIN
-    DBMS_OUTPUT.PUT_LINE('=== WEATHER IMPACT ASSESSMENT ===');
-    DBMS_OUTPUT.PUT_LINE('=' || RPAD('=', 50, '='));
-    
-    FOR weather_rec IN weather_stats LOOP
-        DBMS_OUTPUT.PUT_LINE(RPAD(weather_rec.condition, 12) ||
-                            RPAD('Readings: ' || weather_rec.readings, 15) ||
-                            RPAD('Vis: ' || weather_rec.avg_visibility, 12) ||
-                            RPAD('Wind: ' || weather_rec.avg_wind_speed, 12) ||
-                            'Temp: ' || weather_rec.avg_temperature || '°C');
-    END LOOP;
-END generate_weather_impact_report;
-/
+-- 4. WEATHER IMPACT CORRELATION
+WITH weather_flights AS (
+    SELECT 
+        wc.condition,
+        wc.visibility,
+        wc.wind_speed,
+        COUNT(f.flight_id) AS total_flights,
+        SUM(CASE WHEN f.status = 'Delayed' THEN 1 ELSE 0 END) AS delayed_flights,
+        ROUND(SUM(CASE WHEN f.status = 'Delayed' THEN 1 ELSE 0 END) * 100.0 / COUNT(f.flight_id), 2) AS delay_percentage
+    FROM flights f
+    CROSS JOIN LATERAL (
+        SELECT * FROM weather_conditions w
+        WHERE w.timestamp <= f.scheduled_arrival
+        ORDER BY ABS(EXTRACT(EPOCH FROM (w.timestamp - f.scheduled_arrival)))
+        FETCH FIRST 1 ROW ONLY
+    ) wc
+    GROUP BY wc.condition, wc.visibility, wc.wind_speed
+)
+SELECT 
+    condition,
+    visibility_range,
+    wind_range,
+    total_flights,
+    delayed_flights,
+    delay_percentage,
+    RANK() OVER (ORDER BY delay_percentage DESC) AS delay_rank
+FROM (
+    SELECT 
+        condition,
+        CASE 
+            WHEN visibility < 2 THEN 'Very Low (<2km)'
+            WHEN visibility < 5 THEN 'Low (2-5km)'
+            WHEN visibility < 10 THEN 'Medium (5-10km)'
+            ELSE 'Good (>10km)'
+        END AS visibility_range,
+        CASE 
+            WHEN wind_speed > 25 THEN 'Very High (>25)'
+            WHEN wind_speed > 15 THEN 'High (15-25)'
+            WHEN wind_speed > 5 THEN 'Medium (5-15)'
+            ELSE 'Low (<5)'
+        END AS wind_range,
+        total_flights,
+        delayed_flights,
+        delay_percentage
+    FROM weather_flights
+) subquery
+ORDER BY delay_percentage DESC;
 
--- 5. PROCEDURE: Executive Dashboard
-CREATE OR REPLACE PROCEDURE generate_executive_dashboard AS
-    v_total_flights NUMBER;
-    v_total_airlines NUMBER;
-    v_total_emergencies NUMBER;
-    v_total_assignments NUMBER;
-    v_audit_entries NUMBER;
-BEGIN
-    -- Calculate KPIs
-    SELECT COUNT(*) INTO v_total_flights FROM flights;
-    SELECT COUNT(DISTINCT airline) INTO v_total_airlines FROM flights;
-    SELECT COUNT(*) INTO v_total_emergencies FROM emergency_alerts;
-    SELECT COUNT(*) INTO v_total_assignments FROM flight_assignments;
-    SELECT COUNT(*) INTO v_audit_entries FROM audit_log;
-    
-    DBMS_OUTPUT.PUT_LINE('=========================================');
-    DBMS_OUTPUT.PUT_LINE('        AIR TRAFFIC CONTROL SYSTEM');
-    DBMS_OUTPUT.PUT_LINE('              EXECUTIVE DASHBOARD');
-    DBMS_OUTPUT.PUT_LINE('=========================================');
-    DBMS_OUTPUT.PUT_LINE('📊 OPERATIONAL OVERVIEW');
-    DBMS_OUTPUT.PUT_LINE('   • Total Flights: ' || v_total_flights);
-    DBMS_OUTPUT.PUT_LINE('   • Airlines: ' || v_total_airlines);
-    DBMS_OUTPUT.PUT_LINE('   • Runway Assignments: ' || v_total_assignments);
-    DBMS_OUTPUT.PUT_LINE('   • Emergency Alerts: ' || v_total_emergencies);
-    DBMS_OUTPUT.PUT_LINE('   • Audit Events: ' || v_audit_entries);
-    DBMS_OUTPUT.PUT_LINE('');
-    DBMS_OUTPUT.PUT_LINE('🌍 AFRICAN AIRLINES FOCUS');
-    DBMS_OUTPUT.PUT_LINE('   • Rwanda Air: Active');
-    DBMS_OUTPUT.PUT_LINE('   • Ethiopian Airlines: Active');
-    DBMS_OUTPUT.PUT_LINE('   • Regional Routes: Operational');
-    DBMS_OUTPUT.PUT_LINE('');
-    DBMS_OUTPUT.PUT_LINE('✅ SYSTEM STATUS: FULLY OPERATIONAL');
-    DBMS_OUTPUT.PUT_LINE('=========================================');
-END generate_executive_dashboard;
-/
+-- 5. EMERGENCY RESPONSE ANALYTICS
+SELECT 
+    alert_type,
+    COUNT(*) AS total_emergencies,
+    ROUND(AVG(priority_level), 2) AS avg_priority,
+    ROUND(AVG(EXTRACT(MINUTE FROM (resolution_time - timestamp))), 2) AS avg_response_minutes,
+    MIN(EXTRACT(MINUTE FROM (resolution_time - timestamp))) AS min_response_time,
+    MAX(EXTRACT(MINUTE FROM (resolution_time - timestamp))) AS max_response_time,
+    ROUND(STDDEV(EXTRACT(MINUTE FROM (resolution_time - timestamp))), 2) AS response_std_dev
+FROM emergency_alerts
+WHERE resolution_time IS NOT NULL
+GROUP BY alert_type
+ORDER BY total_emergencies DESC;
 
--- 6. TEST ALL BI REPORTS
-CREATE OR REPLACE PROCEDURE test_all_bi_reports AS
-BEGIN
-    DBMS_OUTPUT.PUT_LINE('🚀 TESTING BUSINESS INTELLIGENCE REPORTS');
-    DBMS_OUTPUT.PUT_LINE('');
-    
-    generate_executive_dashboard();
-    DBMS_OUTPUT.PUT_LINE('');
-    
-    generate_airline_performance_report();
-    DBMS_OUTPUT.PUT_LINE('');
-    
-    generate_runway_utilization_report();
-    DBMS_OUTPUT.PUT_LINE('');
-    
-    generate_emergency_analytics();
-    DBMS_OUTPUT.PUT_LINE('');
-    
-    generate_weather_impact_report();
-    
-    DBMS_OUTPUT.PUT_LINE('');
-    DBMS_OUTPUT.PUT_LINE('✅ ALL BI REPORTS GENERATED SUCCESSFULLY!');
-END test_all_bi_reports;
-/
+-- 6. PASSENGER LOAD FORECASTING
+SELECT 
+    EXTRACT(HOUR FROM scheduled_arrival) AS hour_of_day,
+    COUNT(*) AS flight_count,
+    SUM(passenger_count) AS total_passengers,
+    ROUND(AVG(passenger_count), 0) AS avg_passengers_per_flight,
+    ROUND(SUM(passenger_count) * 100.0 / (SELECT SUM(passenger_count) FROM flights), 2) AS passenger_percentage,
+    ROW_NUMBER() OVER (ORDER BY SUM(passenger_count) DESC) AS passenger_rank
+FROM flights
+GROUP BY EXTRACT(HOUR FROM scheduled_arrival)
+ORDER BY hour_of_day;
+
+-- 7. AIRLINE RELIABILITY INDEX
+WITH airline_stats AS (
+    SELECT 
+        airline,
+        COUNT(*) AS total_flights,
+        SUM(CASE WHEN status = 'Landed' THEN 1 ELSE 0 END) AS on_time_flights,
+        SUM(CASE WHEN status = 'Delayed' THEN 1 ELSE 0 END) AS delayed_flights,
+        ROUND(AVG(passenger_count), 0) AS avg_passengers,
+        COUNT(DISTINCT aircraft_type) AS fleet_variety
+    FROM flights
+    GROUP BY airline
+)
+SELECT 
+    airline,
+    total_flights,
+    on_time_flights,
+    delayed_flights,
+    ROUND(on_time_flights * 100.0 / total_flights, 2) AS reliability_score,
+    avg_passengers,
+    fleet_variety,
+    NTILE(4) OVER (ORDER BY ROUND(on_time_flights * 100.0 / total_flights, 2) DESC) AS reliability_quartile
+FROM airline_stats
+ORDER BY reliability_score DESC;
+
+-- 8. RESOURCE OPTIMIZATION ANALYSIS
+SELECT 
+    ar.resource_type,
+    ar.resource_name,
+    ar.status,
+    ar.capacity,
+    COUNT(fa.assignment_id) AS usage_count,
+    ROUND(COUNT(fa.assignment_id) * 100.0 / (SELECT COUNT(*) FROM flight_assignments), 2) AS usage_percentage,
+    CASE 
+        WHEN ar.status = 'Under Maintenance' THEN 'Maintenance Required'
+        WHEN COUNT(fa.assignment_id) = 0 THEN 'Underutilized'
+        WHEN COUNT(fa.assignment_id) > ar.capacity * 0.8 THEN 'Overutilized'
+        ELSE 'Optimally Utilized'
+    END AS utilization_status
+FROM airport_resources ar
+LEFT JOIN flight_assignments fa ON ar.resource_id = fa.resource_id
+GROUP BY ar.resource_type, ar.resource_name, ar.status, ar.capacity
+ORDER BY ar.resource_type, usage_count DESC;
