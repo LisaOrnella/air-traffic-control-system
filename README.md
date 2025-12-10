@@ -51,10 +51,10 @@ For detailed analysis, model diagrams, and design rationale, please refer to the
 
 | Document | Content Summary | Link |
 | :--- | :--- | :--- |
-| **Data Dictionary** | Detailed column definitions, data types, and constraints for all 3NF tables. | [View Documentation](Documentation/data_dictionary.md) |
-| **Architecture** | Explanation and diagram of the Three-Tier Model (Presentation $\to$ PL/SQL $\to$ Data). | [View Documentation](database/documentation/architecture.md) |
-| **Design Decisions** | Rationale for using PL/SQL packages, Compound Triggers, and 3NF normalization. | [View Documentation](database/documentation/design_decisions.md) |
-| **Analytics Queries** | SQL scripts for calculating key BI metrics (OTP, Resource Utilization). | [View Queries](queries/analytics.sql) |
+| **Data Dictionary** | Detailed column definitions, data types, and constraints for all 3NF tables. | [View Dictionary](Documentation/data_dictionary.md) |
+| **Architecture** | Explanation and diagram of the Three-Tier Model (Presentation $\to$ PL/SQL $\to$ Data). | [View Architecture](Documentation/architecture.md) |
+| **Design Decisions** | Rationale for using PL/SQL packages, Compound Triggers, and 3NF normalization. | [View Design decisions](Documentation/design_decisions.md) |
+| **Analytics Queries** | SQL scripts for calculating key BI metrics (OTP, Resource Utilization). | [View Queries](queries/analytics-querries.sql) |
 
 ---
 
