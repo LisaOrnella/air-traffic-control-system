@@ -22,15 +22,7 @@ Manual scheduling leads to high runway conflict risk, slow emergency response ti
 3.  **Efficiency:** Provide actionable Business Intelligence (BI) for On-Time Performance (OTP) and resource utilization analysis.
 
 ---
-### Execution Steps
-1.  **Clone Project:** Use the following command to download the repository:
-    `git clone [Your HTTPS Git URL]`
-2.  **Run DDL:** Log in as `atc_user` and execute `database/scripts/02_table_creation.sql` to create the schema (tables, PKs, FKs).
-3.  **Load Data:** Run `database/scripts/03_data_insertion.sql` to populate the tables.
-4.  **Deploy Logic:** Execute `database/scripts/04_procedures_functions.sql` and `database/scripts/05_triggers_auditing.sql` to deploy the PL/SQL package and security features.
-5.  **Verify Functionality:** Run `queries/test_validation.sql` to verify that the assignment procedure works and that the security trigger successfully blocks DML attempts.
 
----
 
 ## 🛠️ Technical Architecture
 
@@ -72,7 +64,7 @@ This table contains direct links to the key screenshots and diagrams required to
 
 | Artifact | Purpose | Proof File Link |
 | :--- | :--- | :--- |
-| **Business Process Model** | Shows the full operational flow, including Conflict Detection and Emergency Response (Phase II). | [View Diagram](screenshots/Air Traffic Emergency Flow-2025-12-10-133236.jpg) |
+| **Business Process Model** | Shows the full operational flow, including Conflict Detection and Emergency Response (Phase II). | [View Diagram](screenshots/Air Traffic Emergency Flow.png) |
 | **System Architecture** | Proves the design utilizes the professional 3-Tier Model with PL/SQL as the Application Tier (Phase III). | [View Diagram](screenshots/image_ebbb16.png) |
 | **Security Trigger Block** | Evidence that the security trigger successfully **blocked** a DML operation (e.g., a DELETE) on a core table during a restricted time (Phase VII). | [View Screenshot](screenshots/validation_test.png) |
 | **Audit Log Entry** | Proof that the system recorded the attempt (a "BLOCKED" entry) in the `AUDIT_LOG` table for compliance (Phase VII). | [View Screenshot](screenshots/table_flights.png) |
