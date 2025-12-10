@@ -64,12 +64,15 @@ This table contains direct links to the key screenshots and diagrams required to
 
 | Artifact | Purpose | Proof File Link |
 | :--- | :--- | :--- |
-| **Business Process Model** | Shows the full operational flow, including Conflict Detection and Emergency Response (Phase II). | [View Diagram](screenshots/Air Traffic Emergency Flow.png) |
-| **System Architecture** | Proves the design utilizes the professional 3-Tier Model with PL/SQL as the Application Tier (Phase III). | [View Diagram](screenshots/image_ebbb16.png) |
-| **Security Trigger Block** | Evidence that the security trigger successfully **blocked** a DML operation (e.g., a DELETE) on a core table during a restricted time (Phase VII). | [View Screenshot](screenshots/validation_test.png) |
-| **Audit Log Entry** | Proof that the system recorded the attempt (a "BLOCKED" entry) in the `AUDIT_LOG` table for compliance (Phase VII). | [View Screenshot](screenshots/table_flights.png) |
-| **Package/Functionality Test**| The full output from running the `test_validation.sql` script, confirming the success of the package and trigger. | [View Screenshot](screenshots/summary.png) |
-| **Table/Relationship Structure** | Visual proof of table creation and Foreign Key relationships (Phase III). | [View Screenshot](screenshots/foreign_keys_and_relationships.png) |
+| **Business Process Model (Assignment)** | Shows the automation flow from request to assignment and auditing (Phase II). | [View Diagram](screenshots/ATC_Landing_Request_Flow.png) |
+| **Business Process Model (Emergency)** | Shows the complex flow for handling emergencies and manual controller override. [View Diagram](screenshots/Air_Traffic_Emergency_Flow.png) 
+| **System Architecture** | Proves the design utilizes the professional 3-Tier Model with PL/SQL as the Application Tier (Phase III). | [View Diagram](screenshots/tier.png) |
+| **Package/Trigger Verification** | The combined output from running the `validation_test.sql` script, confirming the success of the package and trigger. | [View Screenshot](screenshots/validation_test.png) |
+| **Schema Structure** | Visual proof of table creation, column details, and Foreign Key relationships (Phase III). | [View Screenshot](screenshots/foreign keys and relationships.png) |
+| **Security Audit Log Entry** | Proof that the system recorded the security event (a "BLOCKED" entry) in the `AUDIT_LOG` table for compliance (Phase VII). | [View Screenshot](screenshots/Only_recent_audits.png) |
+| **Summary of Verification** | A final consolidated output showing overall test results. | [View Screenshot](screenshots/summary.png) |
+
+---
 ## 📂 Repository Structure
 
 ```text
