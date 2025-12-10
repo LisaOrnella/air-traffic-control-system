@@ -45,15 +45,16 @@ The schema is normalized to 3NF, revolving around the core entities:
 
 ---
 
-## 🚀 Key Features & Deliverables by Phase
+## Links to Documentation
 
-| Phase | Feature Implemented | Technical Components |
+For detailed analysis, model diagrams, and design rationale, please refer to the following clickable links:
+
+| Document | Content Summary | Link |
 | :--- | :--- | :--- |
-| **Phase II** | **Business Process Model** | Swimlane Diagram (`Air Traffic Emergency Flow.png`) showing Pilot, System, and Controller interaction. |
-| **Phase III** | **Logical Model Design (3NF)** | Fully normalized schema with detailed Data Dictionary. |
-| **Phase IV** | **Core Logic** | `atc_manager_pkg.assign_runway` procedure and utility functions. |
-| **Phase VII**| **Security & Auditing** | Compound Trigger (`05_triggers.sql`) to **block DML on weekdays** and record all attempts in `AUDIT_LOG`. |
-| **Phase VIII**| **Business Intelligence** | Analytical queries in `queries/analytics.sql` for OTP calculation. |
+| **Data Dictionary** | Detailed column definitions, data types, and constraints for all 3NF tables. | [View Documentation](database/documentation/data_dictionary.md) |
+| **Architecture** | Explanation and diagram of the Three-Tier Model (Presentation $\to$ PL/SQL $\to$ Data). | [View Documentation](database/documentation/architecture.md) |
+| **Design Decisions** | Rationale for using PL/SQL packages, Compound Triggers, and 3NF normalization. | [View Documentation](database/documentation/design_decisions.md) |
+| **Analytics Queries** | SQL scripts for calculating key BI metrics (OTP, Resource Utilization). | [View Queries](queries/analytics.sql) |
 
 ---
 
