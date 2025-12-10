@@ -49,7 +49,7 @@ The schema is normalized to 3NF, revolving around the core entities:
 
 | Phase | Feature Implemented | Technical Components |
 | :--- | :--- | :--- |
-| **Phase II** | **Business Process Model** | Swimlane Diagram (`image_ecba15.jpg`) showing Pilot, System, and Controller interaction. |
+| **Phase II** | **Business Process Model** | Swimlane Diagram [ ![Business Process Swimlane Diagram - Click to View Full Resolution](screenshots/Air Traffic Emergency Flow-2025-12-10-133236.jpg) ](screenshots/Air Traffic Emergency Flow-2025-12-10-133236.jpg) showing Pilot, System, and Controller interaction. |
 | **Phase III** | **Logical Model Design (3NF)** | Fully normalized schema with detailed Data Dictionary. |
 | **Phase IV** | **Core Logic** | `atc_manager_pkg.assign_runway` procedure and utility functions. |
 | **Phase VII**| **Security & Auditing** | Compound Trigger (`05_triggers.sql`) to **block DML on weekdays** and record all attempts in `AUDIT_LOG`. |
