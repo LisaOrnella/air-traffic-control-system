@@ -2,7 +2,7 @@
 
 ## Diagram Overview
 This swimlane diagram illustrates the automated air traffic control operations process, showing how different roles interact to ensure safe and efficient airport operations.
-
+![image](https://github.com/LisaOrnella/air-traffic-control-system/blob/main/database/Air%20Traffic%20Emergency%20Flow-2025-12-10-133236.png?raw=true)
 ## Swimlane Roles and Responsibilities
 
 ### 1. Pilot Lane
