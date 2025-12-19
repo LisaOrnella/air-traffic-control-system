@@ -58,19 +58,18 @@ For detailed analysis, model diagrams, and design rationale, please refer to the
 | **Analytics Queries** | SQL scripts for calculating key BI metrics (OTP, Resource Utilization). | [View Queries](queries/analytics-querries.sql) |
 
 ---
-📸 Visual Proof and Verification Links
+## 📊 Project Artifacts & Proof of Implementation
 
-This table contains direct links to the key screenshots and diagrams required to verify the system's functionality and adherence to the design goals.
+The following table maps the project requirements to technical evidence captured during development.
 
-| Artifact | Purpose | Proof File Link |
+| Artifact | Purpose | Evidence Description |
 | :--- | :--- | :--- |
-| **Business Process Model (Assignment)** | Shows the automation flow from request to assignment and auditing (Phase II). | [View Diagram](screenshots/ATC_Landing_Request_Flow.png) |
-| **Business Process Model (Emergency)** | Shows the complex flow for handling emergencies and manual controller override. [View Diagram](screenshots/Air_Traffic_Emergency_Flow.png) 
-| **System Architecture** | Proves the design utilizes the professional 3-Tier Model with PL/SQL as the Application Tier (Phase III). | [View Diagram](screenshots/tier.png) |
-| **Package/Trigger Verification** | The combined output from running the `validation_test.sql` script, confirming the success of the package and trigger. | [View Screenshot](screenshots/validation_test.png) |
-| **Schema Structure** | Visual proof of table creation, column details, and Foreign Key relationships (Phase III). | [View Screenshot](screenshots/foreign keys and relationships.png) |
-| **Security Audit Log Entry** | Proof that the system recorded the security event (a "BLOCKED" entry) in the `AUDIT_LOG` table for compliance (Phase VII). | [View Screenshot](screenshots/Only_recent_audits.png) |
-| **Summary of Verification** | A final consolidated output showing overall test results. | [View Screenshot](screenshots/summary.png) |
+| **ER Diagram** | Shows the 3rd Normal Form (3NF) relational design. | Visual layout of `FLIGHTS`, `RESOURCES`, `ASSIGNMENTS`, `HOLIDAYS`, and `AUDIT_LOG`. |
+| **Database Structure** | Confirms isolation in the `PLSQL_AIRTRAFFIC2025` PDB. | SQL Developer Tree view showing all Tables, Packages, and Triggers. |
+| **Sample Data** | Demonstrates handling of 115+ flight records. | Result grid output showing 10 sample rows from the `FLIGHTS` table. |
+| **Procedures & Triggers** | Displays the core PL/SQL logic and security rules. | Editor screenshot of `atc_manager_pkg` and `trg_security_and_holidays`. |
+| **Test Execution** | Verifies functional automation and package calls. | Script output showing "PL/SQL procedure successfully completed." |
+| **Audit Log Entries** | Validates security tracking for "Phase VII". | Query results from the `AUDIT_LOG` showing blocked unauthorized actions. |
 
 ---
 ## 📂 Repository Structure
