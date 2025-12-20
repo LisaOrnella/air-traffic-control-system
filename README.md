@@ -5,6 +5,7 @@
 **ID:** 28753  
 **Group:** Tuesday  (B)   
 PL/SQL capstone project
+
 **Institution:** Adventist University of Central Africa (AUCA)  
 **Instructor:** Eric Maniraguha  
 
@@ -86,7 +87,7 @@ Demonstrates the use of stored logic to handle airport operations.
 ### 🧪 3. Test Execution & Sample Data
 Verification of data integrity and system performance under load.
 
-* **High-Volume Data**: Results showing the system handling 115+ flight records.
+* **High-Volume Data**: Resource management query results
     * **Evidence:**
    [View sample](https://github.com/LisaOrnella/air-traffic-control-system/blob/main/screenshots/test_results/Aiport_resources.png?raw=true)
 
