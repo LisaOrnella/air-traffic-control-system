@@ -64,7 +64,7 @@ The following table maps the project requirements to technical evidence captured
 
 | Artifact | Purpose | Evidence Description |
 | :--- | :--- | :--- |
-| **ER Diagram** | Shows the 3rd Normal Form (3NF) relational design. | Visual layout of `FLIGHTS`, `RESOURCES`, `ASSIGNMENTS`, `HOLIDAYS`, and `AUDIT_LOG`.![ER Diagram](https://github.com/LisaOrnella/air-traffic-control-system/blob/main/screenshots/database_objects/er_diagram.png?raw=true)
+| **ER Diagram** | Shows the 3rd Normal Form (3NF) relational design. | Visual layout of `FLIGHTS`, `RESOURCES`, `ASSIGNMENTS`, `HOLIDAYS`, and `AUDIT_LOG`.[View ER Diagram](https://github.com/LisaOrnella/air-traffic-control-system/blob/main/screenshots/database_objects/er_diagram.png?raw=true)
  |
 | **Database Structure** | Confirms isolation in the `PLSQL_AIRTRAFFIC2025` PDB. | SQL Developer Tree view showing all Tables, Packages, and Triggers.[![database structure]([images/er.png](https://github.com/LisaOrnella/air-traffic-control-system/blob/main/screenshots/database_objects/er_diagram.png?raw=true))](https://github.com/LisaOrnella/air-traffic-control-system/blob/main/screenshots/database_objects/data_structure.png?raw=true)] |
 | **Sample Data** | Demonstrates handling of 115+ flight records. | Result grid output showing 10 sample rows from the `FLIGHTS` table.[View sample data](https://github.com/LisaOrnella/air-traffic-control-system/blob/main/screenshots/test_results/Aiport_resources.png?raw=true) |
