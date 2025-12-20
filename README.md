@@ -3,7 +3,8 @@
 **Course:** PL/SQL Database Development (INSY 8311)  
 **Student:** UWASE Lisa Ornella  
 **ID:** 28753  
-**Group:** Tuesday  (B)                                                                                                                                              
+**Group:** Tuesday  (B)   
+PL/SQL capstone project
 **Institution:** Adventist University of Central Africa (AUCA)  
 **Instructor:** Eric Maniraguha  
 
@@ -58,38 +59,51 @@ For detailed analysis, model diagrams, and design rationale, please refer to the
 | **Analytics Queries** | SQL scripts for calculating key BI metrics (OTP, Resource Utilization). | [View Queries](queries/analytics-querries.sql) |
 
 ---
-## 📊 Project Artifacts & Proof of Implementation
 
-The following table maps the project requirements to technical evidence captured during development.
+### 📊 System Architecture & Schema (Phase III)
+Verifies the foundational relational design and environment setup.
 
-| Artifact | Purpose | Evidence Description |
-| :--- | :--- | :--- |
-| **ER Diagram** | Shows the 3rd Normal Form (3NF) relational design. | Visual layout of `FLIGHTS`, `RESOURCES`, `ASSIGNMENTS`, `HOLIDAYS`, and `AUDIT_LOG`.[View ER Diagram](https://github.com/LisaOrnella/air-traffic-control-system/blob/main/screenshots/database_objects/er_diagram.png?raw=true)
- |
-| **Database Structure** | Confirms isolation in the `PLSQL_AIRTRAFFIC2025` PDB. | SQL Developer Tree view showing all Tables, Packages, and Triggers.[![database structure]([images/er.png](https://github.com/LisaOrnella/air-traffic-control-system/blob/main/screenshots/database_objects/er_diagram.png?raw=true))](https://github.com/LisaOrnella/air-traffic-control-system/blob/main/screenshots/database_objects/data_structure.png?raw=true)] |
-| **Sample Data** | Demonstrates handling of 115+ flight records. | Result grid output showing 10 sample rows from the `FLIGHTS` table.[View sample data](https://github.com/LisaOrnella/air-traffic-control-system/blob/main/screenshots/test_results/Aiport_resources.png?raw=true) |
-| **Procedures & Triggers** | Displays the core PL/SQL logic and security rules. | Editor screenshot of `atc_manager_pkg` and `trg_security_and_holidays`. |
-| **Test Execution** | Verifies functional automation and package calls. | Script output showing "PL/SQL procedure successfully completed." |
-| **Audit Log Entries** | Validates security tracking for "Phase VII". | Query results from the `AUDIT_LOG` showing blocked unauthorized actions. |
+* **ER Diagram (3NF)**: Visual layout of the five core tables (`FLIGHTS`, `RESOURCES`, `ASSIGNMENTS`, `HOLIDAYS`, and `AUDIT_LOG`) showing Primary and Foreign Key relationships.
+    * **Evidence:**
+      [View ER Diagram](https://github.com/LisaOrnella/air-traffic-control-system/blob/main/screenshots/database_objects/er_diagram.png?raw=true)
+
+* **Database Structure**: Confirms the schema tree and project isolation in the dedicated PDB.
+    * **Evidence:**
+      [View data structure](https://github.com/LisaOrnella/air-traffic-control-system/blob/main/screenshots/database_objects/data_structure.png?raw=true))
+
+
+### 🧠 2. Application Logic (PL/SQL Tier)
+Demonstrates the use of stored logic to handle airport operations.
+
+* **ATC Manager Package**: Encapsulates procedures like `assign_resource` and functions like `calculate_delay_risk`.
+    * **Evidence:**
+      [View package](https://github.com/LisaOrnella/air-traffic-control-system/blob/main/screenshots/test_results/procedure_code.png?raw=true)
+      
+* **Security Trigger**: The `TRG_SECURITY_AND_HOLIDAYS` object enforces business rules by monitoring table modifications.
+    * **Evidence:**
+      [View trigger in editor](https://github.com/LisaOrnella/air-traffic-control-system/blob/main/screenshots/test_results/Triggers_in_editor.png?raw=true)
+
+### 🧪 3. Test Execution & Sample Data
+Verification of data integrity and system performance under load.
+
+* **High-Volume Data**: Results showing the system handling 115+ flight records.
+    * **Evidence:**
+   [View sample](https://github.com/LisaOrnella/air-traffic-control-system/blob/main/screenshots/test_results/Aiport_resources.png?raw=true)
+
+
+### 🛡️ 4. Security Auditing (Phase VII)
+Compliance proof for automated security tracking.
+
+* **Audit Log Entry**: Query output from the `AUDIT_LOG` table proving the system successfully blocks and records unauthorized holiday modifications.
+    * **Evidence:** 
+   [View recent audit](https://github.com/LisaOrnella/air-traffic-control-system/blob/main/screenshots/test_results/r_audit_log.png?raw=true)
 
 ---
-## 📂 Repository Structure
 
-```text
-tue_28753_lisa_airtraffic_ctrl/
-├── README.md                      # Project documentation (this file)
-├── database/
-│   ├── scripts/                   # SQL execution order: 01 -> 05
-│   │   ├── 01_setup.sql           # PDB and User creation
-│   │   ├── 02_tables.sql          # DDL (CREATE TABLE/FKs/PKs)
-│   │   ├── 03_data.sql            # Bulk INSERT data (500+ records)
-│   │   ├── 04_packages.sql        # PL/SQL Logic (ATC_MANAGER_PKG)
-│   │   └── 05_triggers.sql        # Security Triggers & Auditing
-│   └── documentation/             # Detailed Documentation
-│       ├── data_dictionary.md     # Phase III: Column and Constraint definitions
-│       ├── architecture.md        # Phase III: 3-Tier Architecture explanation
-│       └── design_decisions.md    # Phase III: Rationale for 3NF, Triggers, Packages
-├── queries/
-│   ├── analytics.sql              # BI Dashboard queries (OTP, Utilization)
-│   └── test_validation.sql        # Verification Script for Package/Trigger tests
-└── screenshots/                   # Proof of execution
+## 🛠️ Folder Structure Reference
+
+| Folder | Contents | Requirement Met |
+| :--- | :--- | :--- |
+| `/screenshots/oem_monitoring/` | Dashboard metrics | PDB Health & Environment |
+| `/screenshots/database_objects/` | Diagrams & Trees | 3NF & Application Logic |
+| `/screenshots/test_results/` | Data & Logs | Sample Data & Phase VII |
