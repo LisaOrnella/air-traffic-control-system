@@ -66,7 +66,7 @@ The following table maps the project requirements to technical evidence captured
 | :--- | :--- | :--- |
 | **ER Diagram** | Shows the 3rd Normal Form (3NF) relational design. | Visual layout of `FLIGHTS`, `RESOURCES`, `ASSIGNMENTS`, `HOLIDAYS`, and `AUDIT_LOG`.[![ER Diagram]([images/er.png](https://github.com/LisaOrnella/air-traffic-control-system/blob/main/screenshots/database_objects/er_diagram.png?raw=true))] |
 | **Database Structure** | Confirms isolation in the `PLSQL_AIRTRAFFIC2025` PDB. | SQL Developer Tree view showing all Tables, Packages, and Triggers.[![database structure]([images/er.png](https://github.com/LisaOrnella/air-traffic-control-system/blob/main/screenshots/database_objects/er_diagram.png?raw=true))](https://github.com/LisaOrnella/air-traffic-control-system/blob/main/screenshots/database_objects/data_structure.png?raw=true)] |
-| **Sample Data** | Demonstrates handling of 115+ flight records. | Result grid output showing 10 sample rows from the `FLIGHTS` table. |
+| **Sample Data** | Demonstrates handling of 115+ flight records. | Result grid output showing 10 sample rows from the `FLIGHTS` table.[View sample data](https://github.com/LisaOrnella/air-traffic-control-system/blob/main/screenshots/test_results/Aiport_resources.png?raw=true) |
 | **Procedures & Triggers** | Displays the core PL/SQL logic and security rules. | Editor screenshot of `atc_manager_pkg` and `trg_security_and_holidays`. |
 | **Test Execution** | Verifies functional automation and package calls. | Script output showing "PL/SQL procedure successfully completed." |
 | **Audit Log Entries** | Validates security tracking for "Phase VII". | Query results from the `AUDIT_LOG` showing blocked unauthorized actions. |
